@@ -16,19 +16,22 @@ app.use(cors());
 app.use(express.json());
 app.use(logger);
 
+// MongoDB connection
 mongoose
   .connect(config.mongoURI)
   .then(() => console.log("MongoDB connected successfully."))
   .catch((err) => console.error("MongoDB connection error:", err));
 
+// Routes
 app.use("/api/auth", authRoutes);
 app.use("/api/products", productRoutes);
 app.use("/api/users", userRoutes);
 app.use("/api/orders", orderRoutes);
 
+// Root route
 app.get("/", (req, res) => {
   res.send("Welcome to the Rare You E-commerce API!");
 });
 
-const PORT = config.port || 5000;
-app.listen(PORT, () => console.log(`Server running on http://localhost:${PORT}`));
+// ✅ Export app (DO NOT use app.listen() in Vercel)
+export default app;
