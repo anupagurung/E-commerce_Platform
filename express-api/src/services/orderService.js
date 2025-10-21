@@ -1,8 +1,8 @@
 import crypto from "crypto";
 import Order from "../models/Order.js";
 import Product from "../models/Product.js";
-import Payment from "../models/Payment.js"; // Make sure you have a Payment model
-import payment from "../utils/payment.js"; // Khalti payment module
+import Payment from "../models/Payment.js"; 
+import payment from "../utils/payment.js"; 
 
 /**
  * Create a new order

@@ -7,7 +7,7 @@ import productRoutes from "./routes/productRoutes.js";
 import userRoutes from "./routes/userRoutes.js";
 import orderRoutes from "./routes/orderRoutes.js";
 import logger from "./middleware/logger.js";
-import config, { cloudinary } from "./config/config.js"; // ✅ only once
+import config, { cloudinary } from "./config/config.js"; 
 
 const app = express();
 const upload = multer({ storage: multer.memoryStorage() });
