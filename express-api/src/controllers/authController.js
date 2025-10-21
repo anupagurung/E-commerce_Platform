@@ -1,9 +1,9 @@
 // controllers/authController.js
-const authService = require("../services/authService");
+import { registerUser, loginUser } from "../services/authService.js";
 
-exports.register = async (req, res) => {
+export const register = async (req, res) => {
   try {
-    const { user, token } = await authService.registerUser(req.body);
+    const { user, token } = await registerUser(req.body);
     res.status(201).json({
       success: true,
       message: "User registered successfully.",
@@ -14,9 +14,9 @@ exports.register = async (req, res) => {
   }
 };
 
-exports.login = async (req, res) => {
+export const login = async (req, res) => {
   try {
-    const { user, token } = await authService.loginUser(req.body);
+    const { user, token } = await loginUser(req.body);
     res.status(200).json({
       success: true,
       message: "Login successful.",

@@ -1,13 +1,13 @@
 // services/authService.js
-const bcrypt = require("bcryptjs");
-const jwt = require("jsonwebtoken");
-const User = require("../models/User");
+import bcrypt from "bcryptjs";
+import jwt from "jsonwebtoken";
+import User from "../models/User.js";
 
 const JWT_SECRET = process.env.JWT_SECRET || "your_jwt_secret_key";
 const JWT_EXPIRES_IN = "7d";
 
 // --- Register a new user ---
-const registerUser = async ({ firstName, lastName, email, password }) => {
+export const registerUser = async ({ firstName, lastName, email, password }) => {
   // Check if user exists
   const existingUser = await User.findOne({ email });
   if (existingUser) throw new Error("Email already registered.");
@@ -33,7 +33,7 @@ const registerUser = async ({ firstName, lastName, email, password }) => {
 };
 
 // --- Login existing user ---
-const loginUser = async ({ email, password }) => {
+export const loginUser = async ({ email, password }) => {
   // Select password explicitly
   const user = await User.findOne({ email }).select("+password");
   if (!user) throw new Error("Invalid email or password.");
@@ -52,9 +52,4 @@ const loginUser = async ({ email, password }) => {
   delete userObj.password;
 
   return { user: userObj, token };
-};
-
-module.exports = {
-  registerUser,
-  loginUser,
 };

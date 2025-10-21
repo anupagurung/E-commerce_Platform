@@ -1,5 +1,5 @@
-const mongoose = require('mongoose');
-const bcrypt = require('bcryptjs');
+import mongoose from 'mongoose';
+import bcrypt from 'bcryptjs';
 
 const userSchema = new mongoose.Schema({
     // --- Basic Information ---
@@ -36,7 +36,7 @@ const userSchema = new mongoose.Schema({
     // --- Authorization ---
     role: {
         type: String,
-        enum: ['user', 'admin'], // Restricts the role to one of these two values
+        enum: ['user', 'admin', 'seller'], // Added 'seller' role for e-commerce logic
         default: 'user', // New users are standard users by default
     },
     
@@ -81,4 +81,5 @@ userSchema.pre('save', async function(next) {
 
 const User = mongoose.model('User', userSchema);
 
-module.exports = User;
+// CORRECT EXPORT: Use ES Module default export
+export default User;

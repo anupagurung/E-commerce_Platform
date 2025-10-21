@@ -1,19 +1,16 @@
-// services/userService.js
-const User = require('../models/User');
-const bcrypt = require('bcryptjs');
+import User from "../models/User.js";
+import bcrypt from "bcryptjs";
 
 /**
  * @desc Create a new user (Register)
- * @param {object} userData - Data for the new user from req.body
- * @returns {Promise<Object>} - The newly created user document
  */
-exports.createUser = async (userData) => {
+export const createUser = async (userData) => {
   const { firstName, email, password, role } = userData;
 
   // Check if user already exists
   const userExists = await User.findOne({ email });
   if (userExists) {
-    throw new Error('User with this email already exists.');
+    throw new Error("User with this email already exists.");
   }
 
   // Hash password securely
@@ -25,7 +22,7 @@ exports.createUser = async (userData) => {
     firstName,
     email,
     password: hashedPassword,
-    role: role || 'user', // Default role = user
+    role: role || "user",
   });
 
   // Save and return
@@ -34,44 +31,34 @@ exports.createUser = async (userData) => {
 
 /**
  * @desc Authenticate user (Login)
- * @param {string} email - User email
- * @param {string} password - Plain-text password
- * @returns {Promise<Object>} - The authenticated user document
  */
-exports.authenticateUser = async (email, password) => {
-  const user = await User.findOne({ email }).select('+password');
-  if (!user) {
-    throw new Error('Invalid email or password.');
-  }
+export const authenticateUser = async (email, password) => {
+  const user = await User.findOne({ email }).select("+password");
+  if (!user) throw new Error("Invalid email or password.");
 
   const isMatch = await bcrypt.compare(password, user.password);
-  if (!isMatch) {
-    throw new Error('Invalid email or password.');
-  }
+  if (!isMatch) throw new Error("Invalid email or password.");
 
   return user;
 };
 
 /**
  * @desc Get single user by ID
- * @param {string} userId - MongoDB user ID
- * @returns {Promise<Object|null>}
  */
-exports.getUserById = async (userId) => {
-  return await User.findById(userId).select('-password');
+export const getUserById = async (userId) => {
+  return await User.findById(userId).select("-password");
 };
 
 /**
  * @desc Get all users (admin only)
- * @returns {Promise<Array>}
  */
-exports.getAllUsers = async () => {
-  return await User.find({}).select('-password');
+export const getAllUsers = async () => {
+  return await User.find({}).select("-password");
 };
 
 /**
  * @desc Delete user by ID (admin only)
- * @param {string} userId - MongoDB user ID
- * @returns {Promise<Object|null>}
  */
-exports.deleteUs
+export const deleteUser = async (userId) => {
+  return await User.findByIdAndDelete(userId);
+};

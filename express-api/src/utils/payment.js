@@ -1,21 +1,18 @@
 import axios from "axios";
-import dotenv, { config } from "dotenv";
-
-// Load environment variables from .env file
+import dotenv from "dotenv";
 dotenv.config();
 
 const payViaKhalti = async (orderId, paymentData) => {
   if (!paymentData) throw new Error("Payment data is required");
   if (!paymentData.amount) throw new Error("Payment amount is required");
-  if (!paymentData.purchaseOrderId)
+  if (!paymentData.purchase_order_id)
     throw new Error("Purchase order ID is required");
   if (!paymentData.purchase_order_name)
     throw new Error("Purchase order name is required");
 
-  // Prepare request body
   const body = {
-    return_url: config.khalti.return_url,
-    website_url: config.appUrl,
+    return_url: process.env.KHALTI_RETURN_URL,
+    website_url: process.env.APP_URL || "http://localhost:3000",
     amount: paymentData.amount,
     purchase_order_name: paymentData.purchase_order_name,
     customer_info: {

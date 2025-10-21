@@ -1,4 +1,4 @@
-const mongoose = require("mongoose");
+import mongoose from "mongoose";
 
 const paymentSchema = new mongoose.Schema(
   {
@@ -21,10 +21,10 @@ const paymentSchema = new mongoose.Schema(
       type: Number,
       required: true,
     },
-    method:{
+    method: {
       type: String,
-      required:[true, "Please specify payment method" ],
-      enum: ["cash", "online" , "card"],
+      required: [true, "Please specify payment method"],
+      enum: ["cash", "online", "card"],
     },
     transactionId: {
       type: String,
@@ -46,12 +46,9 @@ const paymentSchema = new mongoose.Schema(
       province: { type: String, required: true },
       country: { type: String, default: "Nepal" },
     },
-    createdAt: {
-      type: Date,
-      default: Date.now,
-    },  
   },
   { timestamps: true }
 );
 
-module.exports = mongoose.model("Payment", paymentSchema);
+const Payment = mongoose.model("Payment", paymentSchema);
+export default Payment;

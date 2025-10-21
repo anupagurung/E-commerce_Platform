@@ -1,18 +1,16 @@
-const { cloudinary } = require("../config/config");
-const Product = require("../models/Product");
-const { uploadFiles, uploadToCloudinary } = require('../utils/file');
+import Product from "../models/Product.js";
+import { uploadFiles } from "../utils/file.js";
+
 /**
- * Get products with filtering, searching, sorting, and pagination
+ * Get products with filtering, search, sort, pagination
  */
-exports.getProducts = async (queryParams) => {
+export const getProducts = async (queryParams) => {
   const { search, sortBy, category, minPrice, maxPrice, page = 1, limit = 10 } = queryParams;
 
-  let query = {};
+  const query = {};
 
-  // 1. Filtering by category
   if (category) query.category = category;
 
-  // 2. Searching by name or description
   if (search) {
     query.$or = [
       { name: { $regex: search, $options: "i" } },
@@ -20,15 +18,13 @@ exports.getProducts = async (queryParams) => {
     ];
   }
 
-  // 3. Price range filtering
   if (minPrice || maxPrice) {
     query.price = {};
     if (minPrice) query.price.$gte = Number(minPrice);
     if (maxPrice) query.price.$lte = Number(maxPrice);
   }
 
-  // 4. Sorting
-  let sortOptions = {};
+  const sortOptions = {};
   switch (sortBy) {
     case "price-asc":
       sortOptions.price = 1;
@@ -46,7 +42,6 @@ exports.getProducts = async (queryParams) => {
       sortOptions.createdAt = -1;
   }
 
-  // 5. Pagination
   const skip = (Number(page) - 1) * Number(limit);
 
   const products = await Product.find(query)
@@ -65,88 +60,45 @@ exports.getProducts = async (queryParams) => {
 };
 
 /**
- * Get a single product by ID
+ * Get product by ID
  */
-exports.getProductById = async (productId) => {
-  return await Product.findById(productId);
-};
+export const getProductById = async (productId) => Product.findById(productId);
 
 /**
- * Create a new product (with optional Cloudinary upload)
+ * Create a product
  */
-exports.createProduct = async (productData, fileBuffer) => {
-  try {
-    let imageUrl = null;
+export const createProduct = async (productData, files) => {
+  let imageUrls = [];
 
-    // If image buffer provided, upload to Cloudinary
-    if (fileBuffer) {
-      const uploadResult = await new Promise((resolve, reject) => {
-        const stream = cloudinary.uploader.upload_stream(
-          { folder: "products" },
-          (error, result) => {
-            if (error) return reject(error);
-            resolve(result);
-          }
-        );
-        stream.end(fileBuffer); 
-      });
-
-      imageUrl = uploadResult.secure_url;
-    }
-
-    const product = new Product({
-      ...productData,
-      image: imageUrl, // store the uploaded image URL
-    });
-
-    return await product.save();
-  } catch (error) {
-    throw new Error("Error creating product: " + error.message);
+  if (files && files.length > 0) {
+    const uploadResults = await uploadFiles(files, "products");
+    imageUrls = uploadResults.map(r => r.secure_url);
   }
+
+  const product = new Product({ ...productData, images: imageUrls });
+  return product.save();
 };
 
 /**
- * Update an existing product by ID
+ * Update a product
  */
-exports.updateProduct = async (productId, updateData) => {
-  return await Product.findByIdAndUpdate(productId, updateData, {
+export const updateProduct = async (productId, updateData, files) => {
+  let imageUrls = [];
+
+  if (files && files.length > 0) {
+    const uploadResults = await uploadFiles(files, "products");
+    imageUrls = uploadResults.map(r => r.secure_url);
+  }
+
+  if (imageUrls.length > 0) updateData.images = imageUrls;
+
+  return Product.findByIdAndUpdate(productId, updateData, {
     new: true,
     runValidators: true,
   });
 };
 
 /**
- * Delete a product by ID
+ * Delete a product
  */
-exports.deleteProduct = async (productId) => {
-  return await Product.findByIdAndDelete(productId);
-};
-exports.updateProduct = async (productId, updateData, files) => {
-  try {
-    let imageUrls = [];
-
-    //  If new files are uploaded, upload them to Cloudinary
-    if (files && files.length > 0) {
-      const uploadResults = await uploadFiles(files, "products");
-      imageUrls = uploadResults.map(result => result.secure_url);
-    }
-
-    // If there are new images, replace the `image` or `images` field
-    if (imageUrls.length > 0) {
-      // If your Product schema uses `image` for single image:
-      // updateData.image = imageUrls[0]; // only the first image
-      // If your Product schema uses `images` array:
-      updateData.images = imageUrls; // replace with new images
-    }
-
-    //  Update the product in DB
-    const updatedProduct = await Product.findByIdAndUpdate(productId, updateData, {
-      new: true,
-      runValidators: true,
-    });
-
-    return updatedProduct;
-  } catch (error) {
-    throw new Error("Error updating product: " + error.message);
-  }
-};
+export const deleteProduct = async (productId) => Product.findByIdAndDelete(productId);

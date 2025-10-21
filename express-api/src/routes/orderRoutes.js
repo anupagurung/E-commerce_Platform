@@ -1,24 +1,27 @@
-const express = require('express');
+// src/routes/orderRoutes.js
+import express from "express";
+import { 
+  createOrder,
+  getOrderById,
+  getUserOrders,
+  orderPayment,
+  confirmOrderPayment
+} from "../controllers/orderController.js";
+import { auth, authorize } from "../middleware/auth.js";
+
 const router = express.Router();
-const orderController = require("../controllers/orderController");  
-const {
-    createOrder,
-    getOrderById,
-    getUserOrders
-} = require('../controllers/orderController');
-const { auth, authorize } = require('../middleware/auth');
 
 // Any logged-in user can create an order
-router.post('/', auth, createOrder);
+router.post("/", auth, createOrder);
 
 // User can view their own orders
-router.get('/myorders/:userId', auth, getUserOrders);
+router.get("/myorders/:userId", auth, getUserOrders);
 
 // User can view a specific order
-router.get('/:id', auth, getOrderById);
+router.get("/:id", auth, getOrderById);
 
-// Payment routes (make sure these exist in controller)
-router.post('/:id/payment', auth, orderController.orderPayment);
-router.put('/:id/payment', auth, orderController.confirmOrderPayment);
+// Payment routes
+router.post("/:id/payment", auth, orderPayment);
+router.put("/:id/payment", auth, confirmOrderPayment);
 
-module.exports = router;
+export default router;  // ✅ ESM default export

@@ -3,11 +3,11 @@ import mongoose from "mongoose";
 import cors from "cors";
 import multer from "multer";
 import authRoutes from "./routes/authRoutes.js";
-import config from "./config/config.js";
 import productRoutes from "./routes/productRoutes.js";
 import userRoutes from "./routes/userRoutes.js";
 import orderRoutes from "./routes/orderRoutes.js";
 import logger from "./middleware/logger.js";
+import config, { cloudinary } from "./config/config.js"; // ✅ only once
 
 const app = express();
 const upload = multer({ storage: multer.memoryStorage() });

@@ -1,21 +1,19 @@
-const Order = require('../models/Order');
-const Product = require('../models/Product');
-const Payment = require('../models/Payment'); // Make sure you have a Payment model
-const crypto = require('crypto');
-const payment = require('../utils/payment'); // Khalti payment module
+import crypto from "crypto";
+import Order from "../models/Order.js";
+import Product from "../models/Product.js";
+import Payment from "../models/Payment.js"; // Make sure you have a Payment model
+import payment from "../utils/payment.js"; // Khalti payment module
 
 /**
  * Create a new order
  */
-exports.createOrder = async (orderData) => {
+export const createOrder = async (orderData) => {
   const { user, orderItems, shippingAddress, paymentMethod, taxPrice = 0, shippingPrice = 0 } = orderData;
 
-  if (!orderItems || orderItems.length === 0) {
-    throw new Error("No order items provided");
-  }
+  if (!orderItems || orderItems.length === 0) throw new Error("No order items provided");
 
   const itemsFromDB = await Product.find({
-    '_id': { $in: orderItems.map(item => item.product) }
+    "_id": { $in: orderItems.map(item => item.product) },
   });
 
   const itemsPrice = orderItems.reduce((acc, item) => {
@@ -54,54 +52,22 @@ exports.createOrder = async (orderData) => {
 /**
  * Get a single order by its ID
  */
-exports.getOrderById = async (orderId) => {
-  return await Order.findById(orderId).populate('user', 'firstName lastName email');
+export const getOrderById = async (orderId) => {
+  return await Order.findById(orderId).populate("user", "firstName lastName email");
 };
 
 /**
  * Get all orders for a specific user
  */
-exports.getOrdersByUserId = async (userId) => {
-  return await Order.find({ user: userId }).populate('orderItems.product', 'name price image');
-};
-
-/**
- * Update an order by ID
- */
-exports.updateOrder = async (orderId, updateData) => {
-  return await Order.findByIdAndUpdate(orderId, updateData, { new: true, runValidators: true });
-};
-
-/**
- * Delete an order by ID and create payment record
- */
-exports.deleteOrder = async (id) => {
-  const order = await Order.findByIdAndDelete(id);
-  if (!order) throw new Error("Order not found");
-
-  const transactionId = crypto.randomUUID();
-
-  const paymentRecord = await Payment.create({
-    amount: order.totalPrice,
-    method: "online",
-    transactionId,
-  });
-
-  await Order.findByIdAndUpdate(id, {
-    payment: paymentRecord._id,
-    isPaid: true,
-    paidAt: Date.now(),
-    orderStatus: "Processing",
-  });
-
-  return { order, paymentRecord };
+export const getOrdersByUserId = async (userId) => {
+  return await Order.find({ user: userId }).populate("orderItems.product", "name price image");
 };
 
 /**
  * Confirm order payment status
  */
-exports.confirmationOrderPayment = async (id, status) => {
-  const order = await Order.findById(id).populate('payment');
+export const confirmOrderPayment = async (id, status) => {
+  const order = await Order.findById(id).populate("payment");
   if (!order) throw new Error("Order not found");
 
   if (status === "completed") {
@@ -119,8 +85,8 @@ exports.confirmationOrderPayment = async (id, status) => {
 /**
  * Process order payment via Khalti
  */
-exports.orderPayment = async (orderId, paymentData) => {
-  const order = await Order.findById(orderId).populate('user', 'firstName lastName email phone');
+export const orderPayment = async (orderId, paymentData) => {
+  const order = await Order.findById(orderId).populate("user", "firstName lastName email phone");
   if (!order) throw new Error("Order not found");
 
   const khaltiPaymentData = {

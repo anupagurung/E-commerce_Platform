@@ -3,6 +3,8 @@
   "version": "1.0.0",
   "description": "An e-commerce website for cosmetics built with Express.js",
   "main": "express-api/src/app.js",
+  "type": "module",
+
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "dev": "nodemon express-api/src/app.js"
@@ -25,6 +27,7 @@
     "cors": "^2.8.5",
     "dotenv": "^16.6.1",
     "express": "^4.19.2",
+    "express-async-handler": "^1.2.0",
     "jsonwebtoken": "^9.0.2",
     "mongoose": "^8.18.0",
     "multer": "^2.0.2",

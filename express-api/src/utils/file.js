@@ -1,11 +1,10 @@
-const cloudinary = require('../config/cloudinary');
+// express-api/src/utils/file.js
+import { cloudinary } from "../config/config.js";
 
 /**
  * Upload multiple files to Cloudinary
- * @param {Array} files - Array of file objects (from multer)
- * @returns {Promise<Array>} Array of upload results
  */
-async function uploadFiles(files) {
+export async function uploadFiles(files) {
   const uploadResults = [];
 
   for (const file of files) {
@@ -27,23 +26,14 @@ async function uploadFiles(files) {
 }
 
 /**
- * Upload a single file buffer to Cloudinary (helper)
- * @param {Buffer} buffer
- * @param {String} folder
- * @returns {Promise<Object>}
+ * Upload a single file buffer to Cloudinary
  */
-async function uploadToCloudinary(buffer, folder = "products") {
+export async function uploadToCloudinary(buffer, folder = "products") {
   return new Promise((resolve, reject) => {
-    const stream = cloudinary.uploader.upload_stream(
-      { folder },
-      (error, result) => {
-        if (error) return reject(error);
-        resolve(result);
-      }
-    );
+    const stream = cloudinary.uploader.upload_stream({ folder }, (error, result) => {
+      if (error) return reject(error);
+      resolve(result);
+    });
     stream.end(buffer);
   });
 }
-
-//Export both functions properly
-module.exports = { uploadFiles, uploadToCloudinary };

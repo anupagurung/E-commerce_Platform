@@ -1,28 +1,27 @@
-// routes/userRoutes.js
-const express = require('express');
-const router = express.Router();
-
-const {
+import express from "express";
+import {
   registerUser,
   loginUser,
   getUserProfile,
   getAllUsers,
   deleteUserByAdmin,
-} = require('../controllers/userController');
+} from "../controllers/userController.js";
 
-const { auth, authorize } = require('../middleware/auth');
+import { auth, authorize } from "../middleware/auth.js";
+
+const router = express.Router();
 
 // Public routes
-router.post('/register', registerUser);
-router.post('/login', loginUser);
+router.post("/register", registerUser);
+router.post("/login", loginUser);
 
 // Any logged-in user can view their own profile
-router.get('/:id', auth, getUserProfile);
+router.get("/:id", auth, getUserProfile);
 
 // Only admin can view all users
-router.get('/', auth, authorize('admin'), getAllUsers);
+router.get("/", auth, authorize("admin"), getAllUsers);
 
 // Only admin can delete a user
-router.delete('/admin/user/:id', auth, authorize('admin'), deleteUserByAdmin);
+router.delete("/admin/user/:id", auth, authorize("admin"), deleteUserByAdmin);
 
-module.exports = router;
+export default router;
