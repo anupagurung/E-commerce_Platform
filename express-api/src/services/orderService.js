@@ -1,31 +1,48 @@
 import crypto from "crypto";
 import Order from "../models/Order.js";
 import Product from "../models/Product.js";
-import Payment from "../models/Payment.js"; 
-import payment from "../utils/payment.js"; 
+import Payment from "../models/Payment.js";
+import payment from "../utils/payment.js";
 
 /**
  * Create a new order
  */
 export const createOrder = async (orderData) => {
-  const { user, orderItems, shippingAddress, paymentMethod, taxPrice = 0, shippingPrice = 0 } = orderData;
+  const {
+    user,
+    orderItems,
+    shippingAddress,
+    paymentMethod,
+    taxPrice = 0,
+    shippingPrice = 0,
+  } = orderData;
 
-  if (!orderItems || orderItems.length === 0) throw new Error("No order items provided");
+  if (!orderItems || orderItems.length === 0) {
+    throw new Error("No order items provided");
+  }
 
+  // Fetch all products involved in the order
   const itemsFromDB = await Product.find({
-    "_id": { $in: orderItems.map(item => item.product) },
+    _id: { $in: orderItems.map((item) => item.product) },
   });
 
+  // Calculate total item price
   const itemsPrice = orderItems.reduce((acc, item) => {
-    const productFromDB = itemsFromDB.find(p => p._id.toString() === item.product);
-    if (!productFromDB) throw new Error(`Product with ID ${item.product} not found.`);
+    const productFromDB = itemsFromDB.find(
+      (p) => p._id.toString() === item.product
+    );
+    if (!productFromDB)
+      throw new Error(`Product with ID ${item.product} not found.`);
     return acc + productFromDB.price * item.quantity;
   }, 0);
 
   const totalPrice = itemsPrice + taxPrice + shippingPrice;
 
-  const processedOrderItems = orderItems.map(item => {
-    const productFromDB = itemsFromDB.find(p => p._id.toString() === item.product);
+  // Process order items for saving
+  const processedOrderItems = orderItems.map((item) => {
+    const productFromDB = itemsFromDB.find(
+      (p) => p._id.toString() === item.product
+    );
     return {
       product: item.product,
       quantity: item.quantity,
@@ -35,6 +52,7 @@ export const createOrder = async (orderData) => {
     };
   });
 
+  // ✅ Use lowercase variable name to avoid overwriting imported Order model
   const order = new Order({
     user,
     orderItems: processedOrderItems,
@@ -53,14 +71,20 @@ export const createOrder = async (orderData) => {
  * Get a single order by its ID
  */
 export const getOrderById = async (orderId) => {
-  return await Order.findById(orderId).populate("user", "firstName lastName email");
+  return await Order.findById(orderId).populate(
+    "user",
+    "firstName lastName email"
+  );
 };
 
 /**
  * Get all orders for a specific user
  */
 export const getOrdersByUserId = async (userId) => {
-  return await Order.find({ user: userId }).populate("orderItems.product", "name price image");
+  return await Order.find({ user: userId }).populate(
+    "orderItems.product",
+    "name price image"
+  );
 };
 
 /**
@@ -86,7 +110,10 @@ export const confirmOrderPayment = async (id, status) => {
  * Process order payment via Khalti
  */
 export const orderPayment = async (orderId, paymentData) => {
-  const order = await Order.findById(orderId).populate("user", "firstName lastName email phone");
+  const order = await Order.findById(orderId).populate(
+    "user",
+    "firstName lastName email phone"
+  );
   if (!order) throw new Error("Order not found");
 
   const khaltiPaymentData = {
