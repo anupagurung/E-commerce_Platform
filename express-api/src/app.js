@@ -7,7 +7,7 @@ import productRoutes from "./routes/productRoutes.js";
 import userRoutes from "./routes/userRoutes.js";
 import orderRoutes from "./routes/orderRoutes.js";
 import logger from "./middleware/logger.js";
-import config, { cloudinary } from "./config/config.js";
+import config, { cloudinary } from "./config/config.js"; 
 
 const app = express();
 const upload = multer({ storage: multer.memoryStorage() });
@@ -18,7 +18,7 @@ app.use(logger);
 
 mongoose
   .connect(config.mongoURI)
-  .then(() => console.log("MongoDB connected successfully"))
+  .then(() => console.log("MongoDB connected successfully."))
   .catch((err) => console.error("MongoDB connection error:", err));
 
 app.use("/api/auth", authRoutes);
@@ -30,4 +30,5 @@ app.get("/", (req, res) => {
   res.send("Welcome to the Rare You E-commerce API!");
 });
 
-export default app;
+const PORT = config.port || 5000;
+app.listen(PORT, () => console.log(`Server running on http://localhost:${PORT}`));
