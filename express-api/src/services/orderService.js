@@ -32,10 +32,17 @@ export const updateOrderStatus = async (orderId, status) => {
   await order.save();
   return order;
 };
-// DELETE ORDER
+
+// ✅ GET ORDER BY ID (used for delete & validation)
+export const getOrderById = async (orderId) => {
+  const order = await Order.findById(orderId);
+  return order;
+};
+
+// ✅ DELETE ORDER (safe)
 export const deleteOrder = async (orderId) => {
   const order = await Order.findById(orderId);
   if (!order) throw new Error("Order not found");
-  await order.deleteOne();
+  await order.deleteOne(); // delete safely
   return order;
 };

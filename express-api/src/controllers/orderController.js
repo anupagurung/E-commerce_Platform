@@ -42,12 +42,29 @@ export const updateOrderStatusController = async (req, res) => {
   }
 };
 
-// DELETE ORDER
+// DELETE ORDER (User can delete only their own order)
 export const deleteOrderController = async (req, res) => {
   try {
     const { orderId } = req.params;
-    const deleted = await orderService.deleteOrder(orderId);
-    res.status(200).json({ success: true, message: "Order deleted successfully", data: deleted });
+
+    // Fetch order from DB
+    const order = await orderService.getOrderById(orderId);
+    if (!order) {
+      return res.status(404).json({ success: false, message: "Order not found" });
+    }
+
+    // Check ownership
+    if (order.user.toString() !== req.user._id.toString()) {
+      return res.status(403).json({ success: false, message: "Unauthorized to delete this order" });
+    }
+
+    // Proceed to delete
+    const deletedOrder = await orderService.deleteOrder(orderId);
+    res.status(200).json({
+      success: true,
+      message: "Order deleted successfully",
+      data: deletedOrder,
+    });
   } catch (error) {
     res.status(500).json({ success: false, message: error.message });
   }
