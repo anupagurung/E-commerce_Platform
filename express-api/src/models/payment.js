@@ -9,12 +9,12 @@ const paymentSchema = new mongoose.Schema(
     },
     order: {
       type: mongoose.Schema.Types.ObjectId,
-      ref: "Order",
+      ref: "order", // ✅ matches your Order model name
       required: true,
     },
     paymentProvider: {
       type: String,
-      enum: ["khalti"], // you can add more providers later
+      enum: ["khalti", "stripe", "paypal"],
       default: "khalti",
     },
     amount: {
@@ -29,7 +29,7 @@ const paymentSchema = new mongoose.Schema(
     transactionId: {
       type: String,
       required: true,
-      unique: true, // each Khalti transaction has a unique ID
+      unique: true, // ensures every payment has a unique reference
     },
     status: {
       type: String,
@@ -51,4 +51,5 @@ const paymentSchema = new mongoose.Schema(
 );
 
 const Payment = mongoose.model("Payment", paymentSchema);
+
 export default Payment;

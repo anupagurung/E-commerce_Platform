@@ -1,27 +1,20 @@
 import express from "express";
+import { auth } from "../middleware/auth.js";
 import {
-  registerUser,
-  loginUser,
-  getUserProfile,
-  getAllUsers,
-  deleteUserByAdmin,
-} from "../controllers/userController.js";
-
-import { auth, authorize } from "../middleware/auth.js";
+  createOrderController,
+  getUserOrdersController,
+  getAllOrdersController,
+} from "../controllers/orderController.js";
 
 const router = express.Router();
 
-// Public routes
-router.post("/register", registerUser);
-router.post("/login", loginUser);
+// Create a new order (authenticated)
+router.post("/", auth, createOrderController);
 
-// Any logged-in user can view their own profile
-router.get("/:id", auth, getUserProfile);
+// Get logged-in user's orders
+router.get("/myorders", auth, getUserOrdersController);
 
-// Only admin can view all users
-router.get("/", auth, authorize("admin"), getAllUsers);
-
-// Only admin can delete a user
-router.delete("/admin/user/:id", auth, authorize("admin"), deleteUserByAdmin);
+// Get all orders (for admin)
+router.get("/", auth, getAllOrdersController);
 
 export default router;
