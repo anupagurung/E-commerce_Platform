@@ -23,7 +23,7 @@ const orderSchema = new mongoose.Schema({
   shippingPrice: { type: Number, required: true },
   totalPrice: { type: Number, required: true },
 
-  // ✅ Add order status
+  //order status
   orderStatus: {
     type: String,
     enum: ["Pending", "Processing", "Shipped", "Delivered", "Cancelled"],

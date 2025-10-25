@@ -32,3 +32,10 @@ export const updateOrderStatus = async (orderId, status) => {
   await order.save();
   return order;
 };
+// DELETE ORDER
+export const deleteOrder = async (orderId) => {
+  const order = await Order.findById(orderId);
+  if (!order) throw new Error("Order not found");
+  await order.deleteOne();
+  return order;
+};

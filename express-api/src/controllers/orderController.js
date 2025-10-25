@@ -41,3 +41,14 @@ export const updateOrderStatusController = async (req, res) => {
     res.status(500).json({ success: false, message: error.message });
   }
 };
+
+// DELETE ORDER
+export const deleteOrderController = async (req, res) => {
+  try {
+    const { orderId } = req.params;
+    const deleted = await orderService.deleteOrder(orderId);
+    res.status(200).json({ success: true, message: "Order deleted successfully", data: deleted });
+  } catch (error) {
+    res.status(500).json({ success: false, message: error.message });
+  }
+};
