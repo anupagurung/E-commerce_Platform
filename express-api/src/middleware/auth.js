@@ -1,4 +1,3 @@
-// src/middleware/auth.js
 import jwt from "jsonwebtoken";
 import User from "../models/User.js";
 import dotenv from "dotenv";
@@ -14,7 +13,9 @@ export const auth = async (req, res, next) => {
 
     token = token.split(" ")[1]; 
 
-    const decoded = jwt.verify(token, process.env.JWT_SECRET);
+    // ✅ Use same fallback secret as authService
+    const decoded = jwt.verify(token, process.env.JWT_SECRET || "your_jwt_secret_key");
+
     req.user = await User.findById(decoded.id).select("-password");
     next();
   } catch (error) {

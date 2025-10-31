@@ -8,7 +8,8 @@ import userRoutes from "./routes/userRoutes.js";
 import orderRoutes from "./routes/orderRoutes.js";
 import logger from "./middleware/logger.js";
 import config, { cloudinary } from "./config/config.js"; 
-
+import dotenv from "dotenv";
+dotenv.config();
 const app = express();
 const upload = multer({ storage: multer.memoryStorage() });
 
