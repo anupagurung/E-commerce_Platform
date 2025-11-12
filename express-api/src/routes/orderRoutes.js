@@ -7,25 +7,16 @@ import {
   updateOrderStatusController,
   deleteOrderController,
 } from "../controllers/orderController.js";
-import Order from "../models/order.js"; // ✅ Add this for direct user updates
+import Order from "../models/order.js";
 
 const router = express.Router();
 
-/* ---------------------------- USER ROUTES ---------------------------- */
-
-// Create new order
 router.post("/", auth, createOrderController);
-
-// Get logged-in user's orders
-router.get("/myorders", auth, getUserOrdersController);
-
-// ✅ User: Update own order status (for Cash on Delivery)
+router.get("/orders", auth, getUserOrdersController);
 router.put("/:orderId/status", auth, async (req, res) => {
   try {
     const { orderId } = req.params;
     const { orderStatus } = req.body;
-
-    // Find the order owned by this user
     const order = await Order.findOne({ _id: orderId, user: req.user._id });
     if (!order) {
       return res.status(404).json({ success: false, message: "Order not found" });
@@ -44,15 +35,9 @@ router.put("/:orderId/status", auth, async (req, res) => {
   }
 });
 
-// ✅ User: Delete own order
 router.delete("/:orderId", auth, deleteOrderController);
 
-/* ---------------------------- ADMIN ROUTES ---------------------------- */
-
-// Admin: Get all orders
 router.get("/", auth, getAllOrdersController);
-
-// Admin: Update any order status (use different endpoint to avoid conflict)
 router.put("/:orderId/status/admin", auth, updateOrderStatusController);
 
 export default router;

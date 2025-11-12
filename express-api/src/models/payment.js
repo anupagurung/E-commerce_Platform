@@ -9,7 +9,7 @@ const paymentSchema = new mongoose.Schema(
     },
     order: {
       type: mongoose.Schema.Types.ObjectId,
-      ref: "order", // ✅ matches your Order model name
+      ref: "order", 
       required: true,
     },
     paymentProvider: {

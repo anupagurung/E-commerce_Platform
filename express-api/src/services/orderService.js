@@ -5,7 +5,7 @@ export const createOrder = async (userId, orderData) => {
   const newOrder = await Order.create({
     user: userId,
     ...orderData,
-    orderStatus: "Pending", // default status
+    orderStatus: "Pending",
   });
   return newOrder;
 };
@@ -33,16 +33,16 @@ export const updateOrderStatus = async (orderId, status) => {
   return order;
 };
 
-// ✅ GET ORDER BY ID (used for delete & validation)
+// GET ORDER BY ID (used for delete & validation)
 export const getOrderById = async (orderId) => {
   const order = await Order.findById(orderId);
   return order;
 };
 
-// ✅ DELETE ORDER (safe)
+// DELETE ORDER 
 export const deleteOrder = async (orderId) => {
   const order = await Order.findById(orderId);
   if (!order) throw new Error("Order not found");
-  await order.deleteOne(); // delete safely
+  await order.deleteOne();
   return order;
 };

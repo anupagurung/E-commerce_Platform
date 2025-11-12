@@ -30,14 +30,14 @@ const userSchema = new mongoose.Schema({
         type: String,
         required: [true, 'Please provide a password.'],
         minlength: [8, 'Password must be at least 8 characters long.'],
-        select: false, // Prevents the password from being sent back in queries by default
+        select: false, 
     },
     
     // --- Authorization ---
     role: {
         type: String,
-        enum: ['user', 'admin', 'seller'], // Added 'seller' role for e-commerce logic
-        default: 'user', // New users are standard users by default
+        enum: ['user', 'admin', 'seller'], 
+        default: 'user',
     },
     
     // --- User-specific Data ---
@@ -51,7 +51,7 @@ const userSchema = new mongoose.Schema({
     // A list of product IDs that the user has added to their wishlist
     wishlist: [{
         type: mongoose.Schema.Types.ObjectId,
-        ref: 'Product' // This creates a relationship with the Product model
+        ref: 'Product' 
     }],
 
 }, {
@@ -60,17 +60,15 @@ const userSchema = new mongoose.Schema({
 });
 
 // --- Mongoose Middleware for Password Hashing ---
-// This function runs automatically BEFORE a user document is saved ('pre-save').
+
 userSchema.pre('save', async function(next) {
-    // Only run this function if the password was actually modified
+   
     if (!this.isModified('password')) {
         return next();
     }
     
     try {
-        // Generate a "salt" to add randomness to the hash
         const salt = await bcrypt.genSalt(10);
-        // Hash the password with the salt
         this.password = await bcrypt.hash(this.password, salt);
         next();
     } catch (error) {
@@ -81,5 +79,4 @@ userSchema.pre('save', async function(next) {
 
 const User = mongoose.model('User', userSchema);
 
-// CORRECT EXPORT: Use ES Module default export
 export default User;

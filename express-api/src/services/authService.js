@@ -3,7 +3,7 @@ import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
 
 // ====================== REGISTER ======================
-export async function registerUser({ firstName, lastName, email, password }) {
+export async function registerUser({ firstName, lastName, email, password, role }) {
   const existingUser = await User.findOne({ email });
   if (existingUser) throw new Error("User already exists");
 
@@ -12,7 +12,7 @@ export async function registerUser({ firstName, lastName, email, password }) {
   }
 
   // Password hashing handled by pre-save middleware, so we can just pass it
-  const newUser = await User.create({ firstName, lastName, email, password });
+  const newUser = await User.create({ firstName, lastName, email, password, role});
 
   const token = jwt.sign(
     { id: newUser._id, email: newUser.email },

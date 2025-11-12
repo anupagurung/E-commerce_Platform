@@ -12,7 +12,7 @@ const router = express.Router();
 router.post("/", auth, createOrderController);
 
 // Get logged-in user's orders
-router.get("/myorders", auth, getUserOrdersController);
+router.get("/orders", auth, getUserOrdersController);
 
 // Get all orders (for admin)
 router.get("/", auth, getAllOrdersController);
