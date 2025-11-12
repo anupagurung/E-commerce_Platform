@@ -13,13 +13,13 @@ const userSchema = new mongoose.Schema({
         required: [true, 'Please provide your last name.'],
         trim: true,
     },
-    
+
     // --- Authentication ---
     email: {
         type: String,
         required: [true, 'Please provide an email address.'],
-        unique: true, // Ensures no two users can have the same email
-        lowercase: true, // Converts email to lowercase to avoid case-sensitivity issues
+        unique: true,
+        lowercase: true,
         trim: true,
         match: [
             /^\w+([.-]?\w+)*@\w+([.-]?\w+)*(\.\w{2,3})+$/,
@@ -30,16 +30,16 @@ const userSchema = new mongoose.Schema({
         type: String,
         required: [true, 'Please provide a password.'],
         minlength: [8, 'Password must be at least 8 characters long.'],
-        select: false, 
+        select: false,
     },
-    
+
     // --- Authorization ---
     role: {
         type: String,
-        enum: ['user', 'admin', 'seller'], 
+        enum: ['user', 'admin', 'merchant'],
         default: 'user',
     },
-    
+
     // --- User-specific Data ---
     shippingAddress: {
         street: { type: String, trim: true },
@@ -47,26 +47,25 @@ const userSchema = new mongoose.Schema({
         postalCode: { type: String, trim: true },
         country: { type: String, trim: true },
     },
-    
+
     // A list of product IDs that the user has added to their wishlist
     wishlist: [{
         type: mongoose.Schema.Types.ObjectId,
-        ref: 'Product' 
+        ref: 'Product'
     }],
 
 }, {
     // Automatically adds createdAt and updatedAt fields
-    timestamps: true 
+    timestamps: true
 });
 
 // --- Mongoose Middleware for Password Hashing ---
 
 userSchema.pre('save', async function(next) {
-   
     if (!this.isModified('password')) {
         return next();
     }
-    
+
     try {
         const salt = await bcrypt.genSalt(10);
         this.password = await bcrypt.hash(this.password, salt);
@@ -75,7 +74,6 @@ userSchema.pre('save', async function(next) {
         next(error);
     }
 });
-
 
 const User = mongoose.model('User', userSchema);
 

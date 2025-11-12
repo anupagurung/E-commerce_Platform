@@ -62,3 +62,17 @@ export const getAllUsers = async () => {
 export const deleteUser = async (userId) => {
   return await User.findByIdAndDelete(userId);
 };
+
+export const updateUserRole = async (userId, newRole) => {
+  const user = await User.findById(userId);
+  if (!user) {
+    throw new Error("User not found.");
+  }
+
+  if (!['user', 'admin', 'merchant'].includes(newRole)) {
+    throw new Error("Invalid role provided.");
+  }
+
+  user.role = newRole;
+  return await user.save();
+};

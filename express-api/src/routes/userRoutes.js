@@ -1,20 +1,35 @@
-import express from "express";
-import { auth } from "../middleware/auth.js";
+import express from 'express';
 import {
-  createOrderController,
-  getUserOrdersController,
-  getAllOrdersController,
-} from "../controllers/orderController.js";
+  registerUser,
+  loginUser,
+  getMyProfile,         // New controller for /me
+  getUserProfileById,     // New controller for /:id
+  getAllUsers,
+  deleteUserByAdmin,
+  updateUserRoleByAdmin
+} from '../controllers/userController.js';
+
+import { auth, authorizeRoles } from '../middleware/auth.js';
 
 const router = express.Router();
 
-// Create a new order (authenticated)
-router.post("/", auth, createOrderController);
+// --- Public Routes ---
+router.post('/register', registerUser);
+router.post('/login', loginUser);
 
-// Get logged-in user's orders
-router.get("/orders", auth, getUserOrdersController);
+// --- Authenticated User Routes ---
+// Get current logged-in user's profile
+router.get('/me', auth, getMyProfile);
 
-// Get all orders (for admin)
-router.get("/", auth, getAllOrdersController);
+// Get a user's profile by ID (accessible by any authenticated user)
+router.get('/:id', auth, getUserProfileById);
+
+// --- Admin Only Routes ---
+// Get all users
+router.get('/', auth, authorizeRoles('admin'), getAllUsers);
+// Update a user's role
+router.put('/admin/role/:id', auth, authorizeRoles('admin'), updateUserRoleByAdmin);
+// Delete a user
+router.delete('/admin/user/:id', auth, authorizeRoles('admin'), deleteUserByAdmin);
 
 export default router;

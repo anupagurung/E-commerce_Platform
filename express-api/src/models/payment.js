@@ -29,7 +29,7 @@ const paymentSchema = new mongoose.Schema(
     transactionId: {
       type: String,
       required: true,
-      unique: true, // ensures every payment has a unique reference
+      unique: true,
     },
     status: {
       type: String,

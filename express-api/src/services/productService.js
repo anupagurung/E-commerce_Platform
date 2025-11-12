@@ -1,9 +1,6 @@
 import Product from "../models/Product.js";
 import { uploadFiles } from "../utils/file.js";
 
-/**
- * Get products with filtering, search, sort, pagination
- */
 export const getProducts = async (queryParams) => {
   const { search, sortBy, category, minPrice, maxPrice, page = 1, limit = 10 } = queryParams;
 
@@ -59,38 +56,43 @@ export const getProducts = async (queryParams) => {
   };
 };
 
-/**
- * Get product by ID
- */
 export const getProductById = async (productId) => Product.findById(productId);
 
-/**
- * Create a product
- */
 export const createProduct = async (productData, files) => {
-  let imageUrls = [];
+  let uploadedImageUrls = [];
 
   if (files && files.length > 0) {
     const uploadResults = await uploadFiles(files, "products");
-    imageUrls = uploadResults.map(r => r.secure_url);
+    uploadedImageUrls = uploadResults.map(r => r.secure_url);
   }
 
-  const product = new Product({ ...productData, images: imageUrls });
+  const mainImageUrl = uploadedImageUrls.length > 0
+    ? uploadedImageUrls[0]
+    : (productData.imageUrl || 'https://via.placeholder.com/150?text=No+Image');
+  const allImages = uploadedImageUrls.length > 0
+    ? uploadedImageUrls
+    : (productData.images || []);
+
+  const product = new Product({
+    ...productData,
+    imageUrl: mainImageUrl,
+    images: allImages,
+  });
   return product.save();
 };
 
-/**
- * Update a product
- */
 export const updateProduct = async (productId, updateData, files) => {
-  let imageUrls = [];
+  let uploadedImageUrls = [];
 
   if (files && files.length > 0) {
     const uploadResults = await uploadFiles(files, "products");
-    imageUrls = uploadResults.map(r => r.secure_url);
-  }
+    uploadedImageUrls = uploadResults.map(r => r.secure_url);
 
-  if (imageUrls.length > 0) updateData.images = imageUrls;
+    if (uploadedImageUrls.length > 0) {
+      updateData.imageUrl = uploadedImageUrls[0];
+      updateData.images = uploadedImageUrls;
+    }
+  }
 
   return Product.findByIdAndUpdate(productId, updateData, {
     new: true,
@@ -98,7 +100,4 @@ export const updateProduct = async (productId, updateData, files) => {
   });
 };
 
-/**
- * Delete a product
- */
 export const deleteProduct = async (productId) => Product.findByIdAndDelete(productId);

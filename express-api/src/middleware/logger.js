@@ -4,4 +4,4 @@ const logger = (req, res, next) => {
   next();
 };
 
-export default logger;  // ✅ ESM default export
+export default logger; 
