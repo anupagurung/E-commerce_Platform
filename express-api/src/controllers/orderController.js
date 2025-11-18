@@ -1,14 +1,23 @@
+// --- START OF FILE orderController.js ---
+
 import * as orderService from "../services/orderService.js";
 
 // CREATE ORDER
 export const createOrderController = async (req, res) => {
   try {
-    const order = await orderService.createOrder(req.user._id, req.body);
+    const orderData = { ...req.body };
+    // REMOVED: Delete paymentMethod from orderData as it's no longer in Order schema
+    // if (orderData.paymentMethod) {
+    //   delete orderData.paymentMethod;
+    // }
+    const order = await orderService.createOrder(req.user._id, orderData);
     res.status(201).json({ success: true, message: "Order created successfully", data: order });
   } catch (error) {
     res.status(500).json({ success: false, message: error.message });
   }
 };
+
+// ... rest of the file remains the same ...
 
 // GET USER ORDERS
 export const getUserOrdersController = async (req, res) => {
