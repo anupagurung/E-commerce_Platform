@@ -20,7 +20,7 @@ import productRoutes from "./routes/productRoutes.js";
 import userRoutes from "./routes/userRoutes.js";
 import orderRoutes from "./routes/orderRoutes.js";
 import logger from "./middleware/logger.js";
-import "./models/Payment.js"; 
+import paymentRoutes from './routes/paymentRoutes.js';
 
 import { initializeConfig, cloudinary } from "./config/config.js";
 const config = initializeConfig();
@@ -44,7 +44,7 @@ app.use("/api/auth", authRoutes);
 app.use("/api/products", productRoutes);
 app.use("/api/users", userRoutes);
 app.use("/api/orders", orderRoutes);
-
+app.use('/api/payments', paymentRoutes);
 app.get("/", (req, res) => {
   res.send("Welcome to the Rare You E-commerce API!");
 });

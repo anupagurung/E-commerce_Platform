@@ -18,6 +18,7 @@ const orderSchema = new mongoose.Schema({
     city: { type: String, required: true },
     postalCode: { type: String, required: true },
     country: { type: String, required: true },
+    province: { type: String, required: true }, 
   },
   // REMOVED: paymentMethod is now handled by the separate Payment model
   // paymentMethod: { type: String, required: true },

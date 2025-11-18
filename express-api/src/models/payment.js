@@ -45,6 +45,7 @@ const paymentSchema = new mongoose.Schema(
       city: { type: String, required: true },
       province: { type: String, required: true },
       country: { type: String, default: "Nepal" },
+      postalCode: { type: String }, 
     },
   },
   { timestamps: true }

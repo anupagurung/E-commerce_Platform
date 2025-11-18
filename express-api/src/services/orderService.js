@@ -69,3 +69,39 @@ export const deleteOrder = async (orderId) => {
   await order.deleteOne();
   return order;
 };
+
+/**
+ * Adds a reference to a new payment to the order's 'payments' array.
+ * @param {string} orderId - The ID of the order to update.
+ * @param {string} paymentId - The ID of the new payment to link.
+ * @returns {Promise<Document>} The updated order document.
+ */
+export const addPaymentToOrder = async (orderId, paymentId) => {
+  const order = await Order.findById(orderId);
+  if (!order) {
+    throw new Error("Order not found while trying to link payment");
+  }
+
+  // Add the payment's ID to the order's list of payments
+  order.payments.push(paymentId);
+  await order.save();
+  return order;
+};
+
+/**
+ * Updates an order to mark it as paid.
+ * @param {string} orderId - The ID of the order to update.
+ * @returns {Promise<Document>} The updated order document.
+ */
+export const updateOrderAsPaid = async (orderId) => {
+  const order = await Order.findById(orderId);
+  if (!order) {
+    throw new Error("Order not found while trying to mark as paid");
+  }
+
+  order.isPaid = true;
+  order.paidAt = Date.now();
+  order.orderStatus = "Processing"; // Automatically move to the next status
+  await order.save();
+  return order;
+};
