@@ -20,6 +20,7 @@ import productRoutes from "./routes/productRoutes.js";
 import userRoutes from "./routes/userRoutes.js";
 import orderRoutes from "./routes/orderRoutes.js";
 import logger from "./middleware/logger.js";
+import "./models/Payment.js"; 
 
 import { initializeConfig, cloudinary } from "./config/config.js";
 const config = initializeConfig();

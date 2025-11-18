@@ -36,7 +36,7 @@ const userSchema = new mongoose.Schema({
     // --- Authorization ---
     role: {
         type: String,
-        enum: ['user', 'admin', 'seller'], // Added 'seller' role for e-commerce logic
+        enum: ['user', 'admin', 'merchant'], // Added 'seller' role for e-commerce logic
         default: 'user', // New users are standard users by default
     },
     
