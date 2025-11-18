@@ -1,7 +1,6 @@
 // --- START OF FILE order.js ---
 
 import mongoose from "mongoose";
-import './Payment.js';
 const orderSchema = new mongoose.Schema({
   user: { type: mongoose.Schema.Types.ObjectId, ref: "User", required: true },
   orderItems: [
