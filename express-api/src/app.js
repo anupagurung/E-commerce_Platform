@@ -9,7 +9,7 @@ dotenv.config({ path: envPath });
 
 console.log("process.env.MONGO_URI after dotenv.config():", process.env.MONGO_URI);
 
-
+app.post('/api/payments/stripe-webhook', express.raw({ type: 'application/json' }), stripeWebhookHandler);
 
 import express from "express";
 import mongoose from "mongoose";

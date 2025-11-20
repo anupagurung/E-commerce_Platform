@@ -14,7 +14,7 @@ const paymentSchema = new mongoose.Schema(
     },
     paymentProvider: {
       type: String,
-      enum: ["khalti", "stripe", "paypal"],
+      enum: ["khalti", "stripe", "paypal", "cod"],
       default: "khalti",
     },
     amount: {
